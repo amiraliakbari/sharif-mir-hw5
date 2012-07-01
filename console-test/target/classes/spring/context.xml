@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">-->
+        <!--<property name="targetClass" value="org.springframework.util.Log4jConfigurer"/>-->
+        <!--<property name="targetMethod" value="initLogging"/>-->
+        <!--<property name="arguments">-->
+            <!--<list>-->
+                <!--<value>console-test/src/main/resources/log4j.properties</value>-->
+            <!--</list>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <bean class="edu.sharif.ce.mir.console.impl.StandardConsole" name="console">
+        <property name="extensionManager" ref="extensionManager" />
+        <property name="prompt" value="$"/>
+    </bean>
+
+    <bean class="edu.sharif.ce.mir.console.em.impl.ApplicationContextExtensionManager" name="extensionManager" />
+
+    <bean class="edu.sharif.ce.mir.console.impl.extensions.Basics" />
+    <bean class="edu.sharif.ce.mir.console.impl.extensions.Extensions" />
+    <bean class="edu.sharif.ce.mir.console.impl.extensions.Help" />
+    <bean class="edu.sharif.ce.mir.console.impl.extensions.QueryConsole" />
+    <bean class="edu.sharif.ce.mir.console.impl.extensions.Pipe" />
+
+</beans>

@@ -1,0 +1,755 @@
+﻿Afrobeat
+Apala
+Benga
+Bongo Flava
+Bikutsi
+Cape Jazz
+Chimurenga
+Fuji music
+Genge
+Highlife
+Hiplife
+Isicathamiya
+Jit
+Jùjú
+Kapuka aka Boomba
+Kizomba
+Kuduro
+Kwaito
+Kwela
+Makossa
+Maloya
+Marrabenta
+Mbalax
+Museve aka Sungura
+Mbaqanga
+Mbube
+Morna
+Palm-wine
+Raï
+Reggae
+Sakara
+Sega
+Semba
+Soukous aka Congo
+Lingala
+African rumba
+Taarab
+Zouglou Cote D'Ivoire
+Asian
+Anison
+Baila
+Bhangra
+Bollywood music
+Dangdut
+Enka
+Kayokyoku
+Luk Thung
+Luk Krung
+Manila Sound
+Morlam
+Onkyokei
+K-pop
+J-pop
+C-pop
+Avant-Garde
+Experimental music
+Noise
+Lo-fi
+Musique concrète
+Blues
+Acid blues
+African blues
+Blues rock
+Blues shouter
+Boogie-woogie
+British blues
+Canadian blues
+Chicago blues
+Classic female blues
+Contemporary R&B
+Country blues
+Delta blues
+Detroit blues
+Electric blues
+Gospel blues
+Hill country blues
+Hokum blues
+Jazz blues
+Jump blues
+Kansas City blues
+Louisiana blues
+Memphis blues
+Piano blues
+Piedmont blues
+Punk blues
+Rhythm and blues
+Soul blues
+St. Louis blues
+Swamp blues
+Texas blues
+West Coast blues
+Comedy music
+Comedy music
+Comedy rock
+Parody music
+Country
+Alternative country
+Cowpunk
+Blues country
+Deathcountry
+Hellbilly music
+Hokum
+Outlaw country
+Progressive country
+Psychobilly/Punkabilly
+Psydeco
+Rap country
+Red Dirt
+Rockabilly
+Rock country/Cosmic American music
+Soul country
+Techno-Country
+Texas Country
+Americana
+Australian country music
+Bakersfield sound
+Bluegrass
+Old-time bluegrass/Appalachian bluegrass
+Progressive bluegrass
+Reactionary bluegrass
+Cajun, Cajun fiddle tunes
+Christian country music
+Classic country
+Close harmony
+Cowboy/Western music
+Dansband music
+Franco-country
+Gulf and western
+Honky Tonk
+Instrumental country
+Lubbock Sound
+Nashville Sound/Countrypolitan
+Neotraditional Country
+New country
+Pop country/Cosmopolitan country
+Sertanejo
+Traditional Country music
+Truck-driving country
+Western swing
+Easy listening
+Background music
+Beautiful music
+Elevator music
+Furniture music
+Lounge music
+Middle of the road
+Electronic
+Ambient
+Ambient dub
+Ambient house
+Ambient techno
+Dark ambient
+Drone music
+Illbient
+Isolationism
+Lowercase
+Asian Underground
+Breakbeat
+Acid breaks
+Baltimore Club
+Big beat
+Breakbeat hardcore
+Hardcore breaks
+Broken beat
+Florida breaks
+Nu skool breaks
+4-beat
+Chiptune
+Bitpop
+Game Boy music
+Nintendocore
+Video game music
+Yorkshire Bleeps and Bass
+Disco
+Cosmic disco
+Disco polo
+Europop
+Euro disco
+Space disco
+Italo disco
+Nu-disco
+Downtempo
+Acid jazz
+Balearic Beat
+Chill out
+Dub music
+Dubtronica
+Ethnic electronica
+Moombahton
+New age music
+Nu jazz
+Trip hop
+Drum and bass
+Darkcore
+Darkstep
+Drumfunk
+Drumstep
+Hardstep
+Intelligent drum and bass
+Jump-Up
+Liquid funk
+Neurofunk
+Oldschool jungle
+Darkside jungle
+Ragga-jungle
+Raggacore
+Sambass
+Trancestep
+Electro
+Crunk
+Electro backbeat
+Electro-grime
+Electropop
+Electroacoustic
+Acousmatic music
+Computer music
+Electroacoustic improvisation
+Field recording
+Live electronics
+Live coding
+Musique concrète
+Soundscape composition
+Tape music
+Electronica
+Berlin school
+Chillwave
+Electronic art music
+Electronic dance music
+Folktronica
+Freestyle music
+IDM
+Glitch
+Laptronica
+Rave breaks
+Skweee
+Sound art
+Synthcore
+Electronic rock
+Alternative dance
+Baggy
+Madchester
+Dance-punk
+Dance-rock
+Dark Wave
+Electroclash
+Electropunk
+Ethereal Wave
+Indietronica
+New rave
+Space rock
+Synthpop
+Synthpunk
+Trip rock
+Eurodance
+Bubblegum dance
+Eurotrance
+J-pop
+Italo dance
+Turbofolk
+Hardcore/Hard dance
+Bouncy house
+Bouncy techno
+Breakcore
+Darkcore
+Digital hardcore
+Doomcore
+Gabber
+Happy hardcore
+Hardstyle
+Jumpstyle
+Makina
+Speedcore
+Terrorcore
+UK hardcore
+Hi-NRG
+Eurobeat
+Hard NRG
+New Beat
+House
+Acid house
+Chicago house
+Deep house
+Diva house
+Dutch house
+Electro house
+French house
+Freestyle house
+Funky house
+Ghetto house
+Hardbag
+Hip house
+Italo house
+Latin house
+Minimal house/Microhouse
+Progressive House
+Rave music
+Swing house
+Tech house
+Tribal house
+UK Hard house
+US garage
+Vocal house
+Industrial
+Aggrotech
+Coldwave
+Cybergrind
+Dark electro
+Death industrial
+Electronic body music
+Futurepop
+Electro-Industrial
+Industrial metal
+Neue Deutsche Härte
+Industrial rock
+Noise
+Japanoise
+Power noise
+Power electronics
+Witch House/Drag
+Post-disco
+Boogie
+Dance-pop
+Progressive
+Progressive breaks
+Progressive drum & bass
+Progressive House/Trance
+Disco house
+Dream house
+Space house
+Progressive techno
+Techno
+Acid techno
+Detroit techno
+Free tekno
+Ghettotech
+Minimal
+Nortec
+Rotterdam techno
+Schranz / Hardtechno
+Symphonic techno
+Tecno brega
+Techno-DNB
+Techstep
+Toytown Techno
+Trance
+Acid trance
+Classic trance
+Dream trance
+Euro-trance
+Goa trance / Psychedelic trance
+Dark psytrance
+Full on
+Psyprog
+Psybient
+Psybreaks
+Suomisaundi
+Hard trance
+Neo-trance
+Tech trance
+Uplifting trance
+Orchestral Uplifting
+Vocal trance
+UK garage
+2-step
+4x4
+Bassline
+Breakstep
+Dubstep
+Funky
+Grime
+Speed garage
+Modern folk
+Contemporary folk
+Indie folk
+Neofolk
+Progressive folk
+Anti-folk
+Freak folk
+Filk music
+American folk revival
+British folk revival
+Industrial folk
+Techno-folk
+Freak folk
+Psychedelic folk
+Hip Hop
+Old school hip hop
+New school hip hop
+Golden age hip hop
+Alternative hip hop
+Avant-garde hip hop
+Chopped and screwed
+Christian hip hop
+Conscious hip hop
+Country-rap
+Crunk
+Crunkcore
+Electro hop
+Electro music
+Freestyle music
+Freestyle rap
+G-Funk
+Gangsta rap
+Ghetto house
+Ghettotech
+Grime
+Hardcore hip hop
+Hip hop soul
+Hip house
+Hip pop
+House music
+Horrorcore
+Hyphy
+Industrial hip hop
+Instrumental hip hop
+Jazz rap
+Lyrical hip hop
+Mafioso rap
+Nerdcore hip hop
+New jack swing
+Political hip hop
+Ragga
+Reggaeton
+Rap opera
+Rap rock
+Rapcore
+Rap metal
+Snap music
+Turntablism
+Underground hip hop
+East Coast hip hop
+Baltimore club
+Brick City club
+Hardcore hip hop
+Mafioso rap
+New Jersey hip hop
+Midwest hip hop
+Chicago hip hop
+Ghetto house
+Detroit hip hop
+Ghettotech
+St. Louis hip hop
+Twin Cities hip hop
+Horrorcore
+Southern hip hop
+Atlanta hip hop
+Snap music
+Bounce music
+Crunk
+Houston hip hop
+Chopped and screwed
+Miami bass
+West Coast hip hop
+Chicano rap
+Gangsta rap
+G-funk
+Hyphy
+Jerkin'
+Bongo Flava
+Cumbia rap
+Grime
+Hiplife
+Kwaito
+Low Bap
+Merenrap
+Motswako
+Reggae Español/Spanish Reggae
+Reggaeton
+Songo-salsa
+Trip hop (or Bristol sound)
+Urban Pasifika
+Jazz
+Acid jazz
+Asian American jazz
+Avant-garde jazz
+Bebop
+Bossa nova
+British dance band
+Cape jazz
+Chamber jazz
+Continental Jazz
+Cool jazz
+Crossover jazz
+Cubop
+Dixieland
+Ethno jazz
+European free jazz
+Free funk
+Free improvisation
+Free jazz
+Gypsy jazz
+Hard bop
+Jazz blues
+Jazz-funk
+Jazz fusion
+Jazz rap
+Jazz rock
+Kansas City blues
+Kansas City jazz
+Latin jazz
+Livetronica
+M-Base
+Mainstream jazz
+Modal jazz
+M-Base
+Neo-bop jazz
+Neo-swing
+Novelty ragtime
+Nu jazz
+Orchestral jazz
+Post-bop
+Punk jazz
+Ragtime
+Shibuya-kei
+Ska jazz
+Smooth jazz
+Soul jazz
+Stride jazz
+Straight-ahead jazz
+Swing
+Third stream
+Trad jazz
+Urban jazz
+Vocal jazz
+West Coast Gypsy jazz
+West Coast jazz
+Zeuhl
+Latin American
+Axé
+Bachata
+Baithak Gana
+Bossa Nova
+Calypso
+Chutney
+Chutney soca
+Cumbia
+Huayño
+Kompa
+Mambo
+Mariachi
+Merengue
+Música Popular Brasileira
+Ranchera
+Reggaeton
+Salsa
+Samba
+Soca
+Son
+Tejano
+Tropicalismo
+Zouk
+Pop
+Arab pop
+Austropop
+Balkan pop
+Baroque pop
+Bubblegum pop
+Classical crossover
+Chinese pop
+Country pop
+Dance-pop
+Disco polo
+Electropop
+Eurobeat
+Europop
+French pop
+Hong Kong and Cantonese pop
+Hong Kong English pop
+Indian pop
+Indonesian pop
+Iranian pop
+Italo dance
+Italo disco
+Jangle pop
+Japanese pop
+Korean pop
+Latin pop
+Levenslied
+Louisiana swamp pop
+Mandarin pop
+Mexican pop
+Motorpop
+Nederpop
+New romantic
+Operatic pop
+Pop rap
+Pop rock
+Soft rock
+Psychedelic pop
+Russian pop
+Sophisti-pop
+Space age pop
+Sunshine pop
+Surf pop
+Synthpop
+Taiwanese pop
+Teen pop
+Thai pop
+Traditional pop music
+Turkish pop
+Vispop
+Wonky Pop
+R&B
+Contemporary R&B
+Doo wop
+Funk
+Deep Funk
+Disco
+Post-disco
+Boogie
+Go-go
+P-Funk
+New jack swing
+Soul
+Blue-eyed soul
+Hip hop soul
+Northern soul
+Neo soul
+Rock
+Alternative rock
+Britpop
+Post-Britpop
+Dream pop
+Grunge
+Post-grunge
+Indie pop
+Dunedin Sound
+Twee Pop
+Indie rock
+Industrial rock
+Noise pop
+Nu metal
+Post-punk revival
+Post-rock
+Post-metal
+Sadcore
+Shoegazer
+Slowcore
+Art rock
+Beat music
+Chinese rock
+Dark cabaret
+Experimental rock
+Electronic rock
+Folk rock
+Garage rock
+Glam rock
+Hard rock
+Heavy metal
+Alternative metal
+Black metal
+Viking Metal
+Christian metal
+Death metal
+Melodic Death Metal
+Technical Death Metal
+Goregrind
+Doom metal
+Drone metal
+Folk metal
+Celtic metal
+Medieval metal
+Funk metal
+Glam metal
+Gothic metal
+Industrial metal
+Metalcore
+Deathcore
+Mathcore
+Djent
+Power metal
+Progressive metal
+Sludge metal
+Speed metal
+Stoner rock
+Symphonic metal
+Thrash metal
+Crossover Thrash Metal
+Groove metal
+Jazz-Rock
+J-Rock
+Math rock
+New Wave
+World Fusion
+Paisley Underground
+Desert rock
+Power pop
+Progressive rock
+Canterbury scene
+Krautrock
+New Prog
+Rock in Opposition
+Space rock
+Psychedelic rock
+Acid rock
+Freakbeat
+Neo-psychedelia
+Raga rock
+Punk rock
+Anarcho punk
+Crust punk
+D-beat
+Art punk
+Deathrock
+Digital Hardcore
+Folk punk
+Celtic punk
+Cowpunk
+Gypsy punk
+Garage punk
+Grindcore
+Crustgrind
+Noisegrind
+Hardcore punk
+Thrashcore
+Crossover Thrash Metal
+Powerviolence
+Street punk
+Horror punk
+Pop punk
+Post-hardcore
+Emo
+Screamo
+Psychobilly
+Riot grrrl
+Ska Punk
+Skacore
+Skate Punk
+Post-punk
+Gothic rock
+No Wave
+Noise rock
+Rap rock
+Rap metal
+Rapcore
+Rock and roll
+Southern rock
+Sufi rock
+Surf rock
+Ska
+2 tone
+Dancehall
+Dub
+Lovers rock
+Ragga
+Reggae
+Polish reggae
+Reggaefusion
+Rocksteady
+Contemporary Christian
+Laïkó
+Pinoy pop
+Schlager
+Sung poetry
+Worldbeat
