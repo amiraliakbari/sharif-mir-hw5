@@ -8,7 +8,10 @@ import edu.sharif.ce.mir.dal.data.impl.DefaultDataInjector;
 import edu.sharif.ce.mir.dal.sql.MySqlSpecificSqlGenerator;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
+
 /**
  * Created by IntelliJ IDEA.
  * User: vahid
@@ -50,7 +53,7 @@ public class MySqlDataStorage implements DataStorage {
 
     @Override
     public void disconnect() {
-        if(conn!=null)
+        if (conn != null)
             try {
                 conn.close();
             } catch (SQLException e) {
@@ -91,7 +94,7 @@ public class MySqlDataStorage implements DataStorage {
     }
 
     @Override
-    public void update(Entity entity) throws SQLException{
+    public void update(Entity entity) throws SQLException {
         String sql = generator.getUpdateStatement(entity);
         sql = injector.inject(sql, entity.getData());
 //            System.out.println("update:" + sql);
@@ -100,9 +103,9 @@ public class MySqlDataStorage implements DataStorage {
     }
 
     @Override
-    public Entity select(Entity entity) throws SQLException{
+    public Entity select(Entity entity) throws SQLException {
         String sql = generator.getSelectStatement(entity.getDataSource());
-        System.out.println(sql);
+//        System.out.println(sql);
         sql = injector.inject(sql, entity.getData());
         System.out.println(sql);
         ResultSet rs = null;
@@ -123,8 +126,8 @@ public class MySqlDataStorage implements DataStorage {
             } else if (column.getType().equals(Long.class)) {
                 newEntity.set(column.getName(), rs.getLong(column.getName()));
             } else if (column.getType().equals(java.util.Date.class)) {
-                Long num=rs.getLong(column.getName());
-                java.util.Date date=new java.util.Date(num);
+                Long num = rs.getLong(column.getName());
+                java.util.Date date = new java.util.Date(num);
 //                    System.out.println(date);
                 newEntity.set(column.getName(), date);
             } else if (column.getType().equals(Boolean.class)) {
@@ -137,16 +140,58 @@ public class MySqlDataStorage implements DataStorage {
         return newEntity;
     }
 
+    public List<Entity> selectAll(DataSource dataSource) throws SQLException {
+        String sql = generator.getSelectAllStatement(dataSource);
+//        System.out.println(sql);
+        System.out.println(sql);
+        ResultSet rs = null;
+        Statement stmt = conn.createStatement();
+        rs = stmt.executeQuery(sql);
+        ArrayList<Entity> entities = new ArrayList<Entity>();
+        Entity newEntity = new Entity(dataSource);
+        System.out.println(rs);
+        if (rs == null)
+            return null;
+        while (rs.next()) {
+            for (ColumnMetaData column : dataSource.getColumns()) {
+                if (column.getType().equals(String.class)) {
+                    newEntity.set(column.getName(), rs.getString(column.getName()));
+                } else if (column.getType().equals(Integer.class)) {
+                    newEntity.set(column.getName(), rs.getInt(column.getName()));
+                } else if (column.getType().equals(Short.class)) {
+                    newEntity.set(column.getName(), rs.getShort(column.getName()));
+                } else if (column.getType().equals(Long.class)) {
+//                    System.out.println(column.getName());
+                    newEntity.set(column.getName(), rs.getLong(column.getName()));
+                } else if (column.getType().equals(java.util.Date.class)) {
+                    Long num = rs.getLong(column.getName());
+                    java.util.Date date = new java.util.Date(num);
+//                    System.out.println(date);
+                    newEntity.set(column.getName(), date);
+                } else if (column.getType().equals(Boolean.class)) {
+                    newEntity.set(column.getName(), rs.getBoolean(column.getName()));
+                } else if (column.getType().equals(Character.class)) {
+                    newEntity.set(column.getName(), rs.getCharacterStream(column.getName()));
+                }
+
+            }
+            entities.add(newEntity);
+        }
+        return entities;
+    }
+
     @Override
     public <E> E select(Entity entity, Class<E> type) throws SQLException {
         final Entity selected = select(entity);
         return selected.toObject(type);
+
     }
 
     public ResultSet execute(String sql) throws SQLException {
         Statement stmt = conn.createStatement();
         return stmt.executeQuery(sql);
     }
+
     public boolean execute2(String sql) throws SQLException {
         Statement stmt = conn.createStatement();
         return stmt.execute(sql);

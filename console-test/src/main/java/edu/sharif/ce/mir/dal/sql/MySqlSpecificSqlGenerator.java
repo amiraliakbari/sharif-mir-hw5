@@ -24,6 +24,15 @@ public class MySqlSpecificSqlGenerator implements SqlGenerator {
         return builder.toString();
     }
 
+    public String getSelectAllStatement(DataSource dataSource) {
+        final String tableName = dataSource.getTable();
+        final StringBuilder sb = new StringBuilder();
+        sb.append("select * from `");
+        sb.append(tableName);
+        sb.append("`");
+        return sb.toString();
+    }
+
     @Override
     public String getDeleteStatement(DataSource dataSource) {
         final String name = dataSource.getPrimaryKey().getName();
@@ -59,7 +68,7 @@ public class MySqlSpecificSqlGenerator implements SqlGenerator {
         final StringBuilder builder = new StringBuilder();
         final String pk = entity.getDataSource().getPrimaryKey().getName();
         builder.append("INSERT INTO ").append("`").append(entity.getDataSource().getTable()).append("`(");
-        boolean first=true;
+        boolean first = true;
         for (Iterator<ColumnMetaData> iterator = entity.getDataSource().getColumns().iterator(); iterator.hasNext(); ) {
             ColumnMetaData metaData = iterator.next();
 //            if (metaData.getName().equals(pk)) {
@@ -70,11 +79,11 @@ public class MySqlSpecificSqlGenerator implements SqlGenerator {
                 if (!first) {
                     builder.append(", ");
                 }
-                first=false;
+                first = false;
                 builder.append("`").append(metaData.getName()).append("`");
             }
         }
-        first=true;
+        first = true;
         builder.append(") VALUES (");
         for (Iterator<ColumnMetaData> iterator = entity.getDataSource().getColumns().iterator(); iterator.hasNext(); ) {
             ColumnMetaData metaData = iterator.next();
@@ -85,7 +94,7 @@ public class MySqlSpecificSqlGenerator implements SqlGenerator {
                 if (!first) {
                     builder.append(", ");
                 }
-                first=false;
+                first = false;
                 builder.append("#").append(metaData.getName());
 
             }
