@@ -6,14 +6,16 @@ import edu.sharif.ce.mir.console.api.Extension;
 import edu.sharif.ce.mir.console.api.OnLoad;
 import edu.sharif.ce.mir.console.extension.tags.AutoLoadedExtension;
 import edu.sharif.ce.mir.console.io.impl.PrimitiveOutput;
+import edu.sharif.ce.mir.dal.data.Entity;
 import edu.sharif.ce.mir.dal.data.impl.Searcher;
 import edu.sharif.ce.mir.dal.data.impl.SongSearcher;
+import edu.sharif.ce.mir.dal.datasource.Songs;
 import edu.sharif.ce.mir.dal.entities.Song;
 import edu.sharif.ce.mir.dal.impl.MySqlDataStorage;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,28 +33,36 @@ public class QueryConsole implements AutoLoadedExtension {
     public void init(Console console) throws SQLException {
         //TODO: load songs from db here
         songs = new ArrayList<Song>();
-        String sql = "select * from `songs`";
+//        String sql = "select * from `songs`";
         MySqlDataStorage storage = new MySqlDataStorage("localhost", "musics", "root", "mysql");
         storage.connect();
-        ResultSet rs = storage.execute(sql);
-        if (rs != null) {
-            while (rs.next()) {
-                String title = rs.getString("title");
-                String genre = rs.getString("genre");
-                String artist = rs.getString("artist");
-                String album = rs.getString("album");
-                int releaseYear = rs.getInt("releaseYear");
-                String lyrics = rs.getString("lyric");
-                Song song = new Song(title, genre, artist, album, releaseYear, lyrics);
-                songs.add(song);
-            }
+        List<Entity> entities = storage.selectAll(new Songs());
+//        System.out.println("ssss " + entities.size());
+        for (Entity entity : entities) {
+            Song song = entity.toObject(Song.class);
+//            System.out.println("for " + song + "    " + entity);
+            songs.add(song);
         }
-//        System.out.println("sssss" + songs.size());
+//        ResultSet rs = storage.execute(sql);
+//        int c =0;
+//        if (rs != null) {
+//            while (rs.next()) {
+//                String title = rs.getString("title");
+//                String genre = rs.getString("genre");
+//                String artist = rs.getString("artist");
+//                String album = rs.getString("album");
+//                int releaseYear = rs.getInt("releaseYear");
+//                String lyrics = rs.getString("lyric");
+//                Song song = new Song(title, genre, artist, album, releaseYear, lyrics);
+//                songs.add(song);
+//                c++;
+//            }
+//        }
 //        songs.add(new SongBean("amirali akbari", "Salam salam man oomadam"));
 //        songs.add(new SongBean("hamed tahmooresi", "salam Pish Pish Pish"));
 
         searcher = new SongSearcher(songs);
-        console.write(new PrimitiveOutput("Songs loaded"));
+//        console.write(new PrimitiveOutput(c + " songs loaded"));
     }
 
     @Command(
