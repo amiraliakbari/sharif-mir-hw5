@@ -1,6 +1,7 @@
 package edu.sharif.ce.mir.dal.data.impl;
 
 
+import edu.sharif.ce.mir.dal.entities.Artist;
 import edu.sharif.ce.mir.dal.entities.Song;
 import edu.sharif.ce.mir.dal.impl.MySqlDataStorage;
 
@@ -10,12 +11,14 @@ import java.util.*;
 
 public class SongSearcher implements Searcher {
     private Iterable<Song> songs;
+    private Iterable<Artist> artists;
     private int rankingMethod = Searcher.RANK_BASIC;
     private MySqlDataStorage storage;
 
-    public SongSearcher(MySqlDataStorage storage, Iterable<Song> songs){
+    public SongSearcher(MySqlDataStorage storage, Iterable<Song> songs, Iterable<Artist> artists){
         this.storage = storage;
         this.songs = songs;
+        this.artists = artists;
     }
     
     public void setRankingMethod(int rankingMethod){
@@ -44,7 +47,7 @@ public class SongSearcher implements Searcher {
         }
         Map<Song, Double> ranking = new LinkedHashMap<Song, Double> ();
         while (!results.isEmpty()){
-            ranking.put(results.minId(), results.min());
+            ranking.put((Song) results.minId(), results.min());
             results.removeMin();
         }
         return ranking;
@@ -59,7 +62,7 @@ public class SongSearcher implements Searcher {
     }
 
     @Override
-    public Iterable<String> era_search(String era) {
+    public Iterable<String> artist_era_search(String era) {
         ArrayList<String> artists = new ArrayList<String>();
         try {
             ResultSet rs = storage.execute("SELECT artist FROM artists WHERE years LIKE '%,"+era.charAt(0)+"_,%'");
@@ -70,6 +73,48 @@ public class SongSearcher implements Searcher {
             e.printStackTrace();
         }
         return artists;
+    }
+
+    @Override
+    public Iterable<String> artist_name_search(String name) {
+        ArrayList<String> artists = new ArrayList<String>();
+        try {
+            ResultSet rs = storage.execute("SELECT artist FROM artists WHERE artist LIKE '%"+name+"%'");
+            while (rs.next()){
+                artists.add(rs.getString("artist"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return artists;
+    }
+
+    @Override
+    public Map<Artist, Double> artist_similar_search(Artist artist, int limit) {
+        if (limit==0)
+            limit = 1000;
+        MinHeap results = new MinHeap(limit);
+        for (Artist other: artists){
+            double score = artist.compareTo(other);
+            if (score == 0) continue;
+            if (results.getLen() < limit) {
+                results.add(score, other);
+            } else if (score > results.min()){
+                results.removeMin();
+                results.add(score, other);
+            }
+        }
+        Map<Artist, Double> ranking = new HashMap<Artist, Double>();
+        while (!results.isEmpty()){
+            ranking.put((Artist) results.minId(), results.min());
+            results.removeMin();
+        }
+        return ranking;
+    }
+
+    @Override
+    public Map<Artist, Double> artist_similar_search(Artist artist) {
+        return artist_similar_search(artist, 0);
     }
 
     public int countSubstring(String str, String findStr){
@@ -119,9 +164,8 @@ public class SongSearcher implements Searcher {
                 break;
             case Searcher.RANK_ZONE:
                 Set<String> keys = data.keySet();
-                int cInd = 0;
                 for (String key: keys){
-                    double impact = Song.getColumnImpact(cInd++);
+                    double impact = Song.getColumnImpact(key);
                     for (String term: terms){
                         if (data.get(key).toString().contains(term)){
                             score += impact;

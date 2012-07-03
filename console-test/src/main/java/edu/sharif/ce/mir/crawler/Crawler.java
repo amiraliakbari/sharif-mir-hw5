@@ -6,6 +6,7 @@ import edu.sharif.ce.mir.aggregator.entities.SongBean;
 import edu.sharif.ce.mir.dal.data.Entity;
 import edu.sharif.ce.mir.dal.datasource.Queue;
 import edu.sharif.ce.mir.dal.datasource.Songs;
+import edu.sharif.ce.mir.dal.entities.Artist;
 import edu.sharif.ce.mir.dal.impl.MySqlDataStorage;
 
 import java.io.IOException;
@@ -60,20 +61,23 @@ public class Crawler implements Runnable {
         // Indexing artist data
         artist = songBean.getArtistS();
         String year = String.valueOf(songBean.getReleaseYear());
-        year = year.substring(year.length() - 2);
         try {
-            ResultSet rs = mySqlDataStorage.execute(selectArtist(artist));
-            if (!rs.next()) {
-                mySqlDataStorage.execute2(createArtist(artist, ","));
+            Artist artistBean = new Artist(mySqlDataStorage, artist);
+            if (!artistBean.load()) {
+                mySqlDataStorage.execute2(Artist.createArtistQuery(artist, ","));
             }
             if (year.length() >= 2) {
-                mySqlDataStorage.execute2(addArtistYear(artist, year));
+                year = year.substring(year.length() - 2);
+                artistBean.addYear(year);
             } else {
                 System.err.println("Invalid year for song: " + year);
             }
+            if (songBean.getGenreS().length() > 0){
+                artistBean.addGenre(songBean.getGenreS());
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            System.err.println("Can not index artist data.");
+            System.err.println("Can not fully index artist data.");
         }
     }
 
@@ -129,32 +133,6 @@ public class Crawler implements Runnable {
         sb.append("'");
         return sb.toString();
     }
-    
-    private String selectArtist(String artist){
-        StringBuilder sb = new StringBuilder();
-        sb.append("select * from `artists` where artist = '");
-        sb.append(artist.replace("\'", "\\\'"));
-        sb.append("'");
-        return sb.toString();
-    }
-    
-    private String createArtist(String artist, String years){
-        StringBuilder sb = new StringBuilder();
-        sb.append("INSERT INTO `artists` (`artist`, `years`) VALUES ('");
-        sb.append(artist.replace("\'", "\\\'"));
-        sb.append("', '");
-        sb.append(years.replace("\'", "\\\'"));
-        sb.append("')");
-        return sb.toString();
-    }
-
-    private String addArtistYear(String artist, String year){
-        StringBuilder sb = new StringBuilder();
-        sb.append("UPDATE `artists` SET `years`=CONCAT(years,'"+year+",') WHERE artist = '");
-        sb.append(artist.replace("\'", "\\\'"));
-        sb.append("' and years NOT LIKE '%,"+year+",%'");
-        return sb.toString();
-    }
 
     private String delete(String title,String artist){
         StringBuilder sb = new StringBuilder();
@@ -198,7 +176,8 @@ public class Crawler implements Runnable {
         mySqlDataStorage.execute2("CREATE TABLE IF NOT EXISTS `artists` (\n" +
                 "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
                 "  `artist` varchar(255) COLLATE utf8_unicode_ci NOT NULL,\n" +
-                "  `years` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',\n" +
+                "  `years` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT ',',\n" +
+                "  `genres` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT ',',\n" +
                 "  PRIMARY KEY (`id`)\n" +
                 ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
     }
