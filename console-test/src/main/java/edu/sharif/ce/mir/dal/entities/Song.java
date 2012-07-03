@@ -1,6 +1,9 @@
 package edu.sharif.ce.mir.dal.entities;
 
-public class Song {
+import edu.sharif.ce.mir.dal.DataSource;
+import edu.sharif.ce.mir.dal.data.Entity;
+
+public class Song extends Entity {
     private static double[] columnImpacts = {0,0.2, 0.1, 0.2,0.2,0.1,0.2};
     Long id;
     public String title;
@@ -10,14 +13,14 @@ public class Song {
     int releaseyear;
     public String lyric;
 
-//    /**
-//     * @param dataSource the data source for which this entity is being created
-//     */
-//    public Song(DataSource dataSource) {
-//        super(dataSource);
-//    }
-//
-//
+    /**
+     * @param dataSource the data source for which this entity is being created
+     */
+    public Song(DataSource dataSource) {
+        super(dataSource);
+    }
+
+
 //    public Song(DataSource dataSource, String title, String genre, String artist, String album, int releaseyear, String lyrics) {
 //        super(dataSource);
 ////        this.title = title;
@@ -27,26 +30,7 @@ public class Song {
 ////        this.releaseyear = releaseyear;
 ////        this.lyrics = lyrics;
 //    }
-//    public Song( String title, String genre, String artist, String album, int releaseyear, String lyrics) {
-//        super(null);
-//        this.title = title;
-//        this.genre = genre;
-//        this.artist = artist;
-//        this.album = album;
-//        this.releaseyear = releaseyear;
-//        this.lyrics = lyrics;
-//    }
 
-    /* JUST FOR DB-less TESTING, REMOVE AFTER DB INTEGRATION */
-//    public SongBean(String a, String l) {
-//        super(null);
-//        title = a;
-//        lyrics = l;
-//        map.put("id", 1);
-//        map.put("title", title);
-//        map.put("lyrics", lyrics);
-//    }
-//    /* END TEST CODE */
 
     public static double getColumnImpact(int index) {
         return columnImpacts[index];

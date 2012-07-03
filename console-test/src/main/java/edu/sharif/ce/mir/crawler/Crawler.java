@@ -14,20 +14,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by IntelliJ IDEA.
- * User: vahid
- * Date: 6/27/12
- * Time: 10:18 PM
- * To change this template use File | Settings | File Templates.
- */
+
 public class Crawler implements Runnable {
     private SongBusiness songBusiness = new SongBusiness();
     private Lyrics lyrics = new Lyrics();
     private MySqlDataStorage mySqlDataStorage;
     private Songs datasource = new Songs();
     private Queue queueDatasource = new Queue();
-    private final int maxNewTrack = 10;
+    protected final int maxNewTrack = 10;
     private static boolean runner = true;
 
     public Crawler(MySqlDataStorage mySqlDataStorage) {
@@ -36,7 +30,6 @@ public class Crawler implements Runnable {
 
     public void crawlOneMusic(String artist, String songName) {
         SongBean songBean;
-        String lyric;
         try {
             songBean = songBusiness.getSongMetadata(artist, songName);
         } catch (Exception e) {
@@ -44,38 +37,50 @@ public class Crawler implements Runnable {
         }
 
         try {
-            lyric = lyrics.getLyric(artist, songName);
+            String lyric = lyrics.getLyric(artist, songName);
             songBean.setLyrics(lyric);
-//            System.out.println(lyric);
         } catch (IOException e) {
             System.out.println("++lyric not found++");
         }
 
         Entity entity = new Entity(datasource);
+        entity.set("title", songBean.getTitleS())
+                .set("genre", songBean.getGenreS())
+                .set("artist", songBean.getArtistS())
+                .set("album", songBean.getAlbumS())
+                .set("lyric", songBean.getLyricsS())
+                .set("releaseyear", songBean.getReleaseYear());
         try {
-//            System.out.println(songBean);
-            mySqlDataStorage.insert(entity.set("title", songBean.getTitleS()).set("genre", songBean.getGenreS())
-                    .set("artist", songBean.getArtistS()).set("album", songBean.getAlbumS()).set("lyric", songBean.getLyricsS()).set("releaseyear", songBean.getReleaseYear()));
+            mySqlDataStorage.insert(entity);
             updateQueue(artist, songName, maxNewTrack);
-
         } catch (SQLException e) {
             System.out.println("duplicated name:" + songBean.getTitle());
-
-//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-
+        // Indexing artist data
+        artist = songBean.getArtistS();
+        String year = String.valueOf(songBean.getReleaseYear());
+        year = year.substring(year.length() - 2);
+        try {
+            ResultSet rs = mySqlDataStorage.execute(selectArtist(artist));
+            if (!rs.next()) {
+                mySqlDataStorage.execute2(createArtist(artist, ","));
+            }
+            if (year.length() >= 2) {
+                mySqlDataStorage.execute2(addArtistYear(artist, year));
+            } else {
+                System.err.println("Invalid year for song: " + year);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Can not index artist data.");
+        }
     }
 
     public void updateQueue(String artist, String songName, int length) throws SQLException {
         List<Track> tracks = songBusiness.getSimilarTracks(artist, songName);
-//        for(Track t:tracks){
-//        System.out.println( t.getName()+":: "+t.getArtist());
-//        }
         List<Track> newTracks = getNewTracks(tracks, length);
-//        System.out.println("2:   " + newTracks.size());
         List<SongBean> similar = songBusiness.getSimilarSongs(newTracks);
-//        System.out.println("3:   " + similar.size());
         Entity entity;
         for (SongBean bean : similar) {
             entity = new Entity(queueDatasource);
@@ -124,6 +129,33 @@ public class Crawler implements Runnable {
         sb.append("'");
         return sb.toString();
     }
+    
+    private String selectArtist(String artist){
+        StringBuilder sb = new StringBuilder();
+        sb.append("select * from `artists` where artist = '");
+        sb.append(artist.replace("\'", "\\\'"));
+        sb.append("'");
+        return sb.toString();
+    }
+    
+    private String createArtist(String artist, String years){
+        StringBuilder sb = new StringBuilder();
+        sb.append("INSERT INTO `artists` (`artist`, `years`) VALUES ('");
+        sb.append(artist.replace("\'", "\\\'"));
+        sb.append("', '");
+        sb.append(years.replace("\'", "\\\'"));
+        sb.append("')");
+        return sb.toString();
+    }
+
+    private String addArtistYear(String artist, String year){
+        StringBuilder sb = new StringBuilder();
+        sb.append("UPDATE `artists` SET `years`=CONCAT(years,'"+year+",') WHERE artist = '");
+        sb.append(artist.replace("\'", "\\\'"));
+        sb.append("' and years NOT LIKE '%,"+year+",%'");
+        return sb.toString();
+    }
+
     private String delete(String title,String artist){
         StringBuilder sb = new StringBuilder();
         sb.append("delete from `queue` where title = '");
@@ -134,8 +166,52 @@ public class Crawler implements Runnable {
         return sb.toString();
     }
 
+    public void migrateCrawlTables() throws SQLException {
+        mySqlDataStorage.execute2("CREATE TABLE IF NOT EXISTS `songs` (\n" +
+                "`id` BIGINT(20) NOT NULL AUTO_INCREMENT,\n" +
+                "`title` VARCHAR(255) NOT NULL  DEFAULT '0',\n" +
+                "`genre` VARCHAR(255) NULL DEFAULT '0',\n" +
+                "`artist` VARCHAR(255) NOT NULL DEFAULT '0',\n" +
+                "`album` VARCHAR(255) NULL DEFAULT '0',\n" +
+                "`lyric` MEDIUMTEXT NOT NULL,\n" +
+                "`releaseyear` INT(11) NOT NULL,\n" +
+                "PRIMARY KEY (`id`),\n" +
+                "UNIQUE INDEX `title_artist` (`title`, `artist`)\n" +
+                ")\n" +
+                "COLLATE='utf8_general_ci'\n" +
+                "ENGINE=InnoDB\n" +
+                "ROW_FORMAT=DEFAULT\n" +
+                "AUTO_INCREMENT=80");
+
+        mySqlDataStorage.execute2("CREATE TABLE IF NOT EXISTS `queue` (\n" +
+                "`id` BIGINT(20) NOT NULL AUTO_INCREMENT,\n" +
+                "`title` VARCHAR(255) NOT NULL DEFAULT '0',\n" +
+                "`artist` VARCHAR(255) NOT NULL DEFAULT '0',\n" +
+                "PRIMARY KEY (`id`),\n" +
+                "UNIQUE INDEX `title_artist` (`title`, `artist`)\n" +
+                ")\n" +
+                "COLLATE='utf8_general_ci'\n" +
+                "ENGINE=InnoDB\n" +
+                "ROW_FORMAT=DEFAULT\n" +
+                "AUTO_INCREMENT=140");
+        
+        mySqlDataStorage.execute2("CREATE TABLE IF NOT EXISTS `artists` (\n" +
+                "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                "  `artist` varchar(255) COLLATE utf8_unicode_ci NOT NULL,\n" +
+                "  `years` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',\n" +
+                "  PRIMARY KEY (`id`)\n" +
+                ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1");
+    }
+
     @Override
     public void run() {
+        try {
+            migrateCrawlTables();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Can not create database schema, aborting.");
+            return;
+        }
         while (runner) {
             String sql = "select title,artist from queue limit 1";
             ResultSet rs = null;
@@ -145,20 +221,13 @@ public class Crawler implements Runnable {
             try {
                 rs = mySqlDataStorage.execute(sql);
                 if (!rs.next()) {
-                    System.out.println("queue in empty");
+                    System.out.println("queue is empty");
                     System.exit(0);
                 }
                 title = rs.getString("title");
                 artist = rs.getString("artist");
 
-//                StringBuilder sb = new StringBuilder();
-//                sb.append("delete from `queue` where title = '");
-//                sb.append(title);
-//                sb.append("' and artist= '");
-//                sb.append(artist);
-//                sb.append("'");
                 String delete=delete(title,artist);
-//                System.out.println(sb.toString());
                 mySqlDataStorage.execute2(delete);
                 safe = true;
             } catch (SQLException e) {
@@ -171,7 +240,13 @@ public class Crawler implements Runnable {
     }
 
     public static void main(String[] args) {
-        final MySqlDataStorage storage = new MySqlDataStorage("localhost", "musics", "root", "mysql");
+//        StringBuilder sb = new StringBuilder();
+//        String year = "09";
+//        sb.append("UPDATE `artists` SET `years` = years + '"+year+",' WHERE artist = '");
+//        sb.append("aname".replace("\'", "\\\'"));
+//        sb.append("' and years NOT LIKE '%,"+year+",%'");
+//        System.err.println(sb.toString());
+        final MySqlDataStorage storage = new MySqlDataStorage("localhost", "musics", "musics", "1234");
         storage.connect();
         Thread crawler = new Thread(new Crawler(storage));
         crawler.start();
