@@ -2,7 +2,11 @@ package edu.sharif.ce.mir.dal.data.impl;
 
 
 import edu.sharif.ce.mir.dal.entities.Song;
+import edu.sharif.ce.mir.dal.impl.MySqlDataStorage;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -10,8 +14,10 @@ import java.util.Set;
 public class SongSearcher implements Searcher {
     private Iterable<Song> songs;
     private int rankingMethod = Searcher.RANK_BASIC;
+    private MySqlDataStorage storage;
 
-    public SongSearcher(Iterable<Song> songs){
+    public SongSearcher(MySqlDataStorage storage, Iterable<Song> songs){
+        this.storage = storage;
         this.songs = songs;
     }
     
@@ -54,7 +60,21 @@ public class SongSearcher implements Searcher {
     public Map<Song, Double> search(String query){
         return search(query, null);
     }
-    
+
+    @Override
+    public Iterable<String> era_search(String era) {
+        ArrayList<String> artists = new ArrayList<String>();
+        try {
+            ResultSet rs = storage.execute("SELECT artist FROM artists WHERE years LIKE '%,"+era.charAt(0)+"_,%'");
+            while (rs.next()){
+                artists.add(rs.getString("artist"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return artists;
+    }
+
     public int countSubstring(String str, String findStr){
         int lastIndex = 0;
         int count =0;

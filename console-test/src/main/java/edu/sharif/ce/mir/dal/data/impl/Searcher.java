@@ -33,4 +33,6 @@ public interface Searcher {
      * @param query The search query
      */
     public Map<Song, Double> search(String query);
+
+    public Iterable<String> era_search(String era);
 }

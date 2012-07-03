@@ -26,25 +26,22 @@ import java.util.Map;
 public class QueryConsole implements AutoLoadedExtension {
     private ArrayList<Song> songs;
     private Searcher searcher;
-//    final MySqlDataStorage storage = new MySqlDataStorage("localhost", "musics", "root", "mysql");
+    MySqlDataStorage storage;
 
 
     @OnLoad
     public void init(Console console) throws SQLException {
         //TODO: load songs from db here
         songs = new ArrayList<Song>();
-//        String sql = "select * from `songs`";
-        MySqlDataStorage storage = new MySqlDataStorage("localhost", "musics", "root", "mysql");
+        storage = new MySqlDataStorage("localhost", "musics", "musics", "1234");
         storage.connect();
-        List<Entity> entities = storage.selectAll(new Songs());
-//        System.out.println("ssss " + entities.size());
-        for (Entity entity : entities) {
-            Song song = entity.toObject(Song.class);
-//            System.out.println("for " + song + "    " + entity);
-            songs.add(song);
-        }
+//        List<Entity> entities = storage.selectAll(new Songs());
+//        for (Entity entity : entities) {
+//            Song song = entity.toObject(Song.class);
+//            songs.add(song);
+//        }
+        int c =0;
 //        ResultSet rs = storage.execute(sql);
-//        int c =0;
 //        if (rs != null) {
 //            while (rs.next()) {
 //                String title = rs.getString("title");
@@ -61,8 +58,8 @@ public class QueryConsole implements AutoLoadedExtension {
 //        songs.add(new SongBean("amirali akbari", "Salam salam man oomadam"));
 //        songs.add(new SongBean("hamed tahmooresi", "salam Pish Pish Pish"));
 
-        searcher = new SongSearcher(songs);
-//        console.write(new PrimitiveOutput(c + " songs loaded"));
+        searcher = new SongSearcher(storage, songs);
+        console.write(new PrimitiveOutput(c + " songs loaded"));
     }
 
     @Command(
@@ -117,6 +114,18 @@ public class QueryConsole implements AutoLoadedExtension {
         console.write(new PrimitiveOutput("Querying:" + query + "," + (column != null ? column : "all") + "," + limit));
         Map<Song, Double> results = searcher.search(query, column, limit);
         print(console, results);
+    }
+
+    @Command(
+            definition = "artists from #string(era)"
+    )
+    public void era_search(Console console, Map<String, Object> arguments) {
+        String era = (String) arguments.get("era");
+        int index = 1;
+        for (String artist: searcher.era_search(era)){
+            console.write(new PrimitiveOutput(index + ") " + artist));
+            index++;
+        }
     }
 
     private void print(Console console, Map<Song, Double> results) {
