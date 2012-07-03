@@ -3,68 +3,76 @@ package edu.sharif.ce.mir.dal.entities;
 import edu.sharif.ce.mir.dal.DataSource;
 import edu.sharif.ce.mir.dal.data.Entity;
 
-public class Song extends Entity {
-    private static double[] columnImpacts = {0,0.2, 0.1, 0.2,0.2,0.1,0.2};
+import java.util.HashMap;
+import java.util.Map;
+
+public class Song{
+    private static Map<String, Double> columnImpacts = new HashMap<String, Double>();
+
+    static {
+        columnImpacts.put("id", 0.0);
+        columnImpacts.put("genre", 0.2);
+        columnImpacts.put("artist", 0.1);
+        columnImpacts.put("album", 0.2);
+        columnImpacts.put("releaseyear", 0.2);
+        columnImpacts.put("title", 0.1);
+        columnImpacts.put("lyric", 0.2);
+    }
+
+    protected Map<String, Object> map = new HashMap<String, Object>();
     Long id;
-    public String title;
     String genre;
     String artist;
     String album;
     int releaseyear;
+    public String title;
     public String lyric;
 
-    /**
-     * @param dataSource the data source for which this entity is being created
-     */
-    public Song(DataSource dataSource) {
-        super(dataSource);
+    public Song(Long id, String genre, String artist, String album, int releaseyear, String title, String lyric) {
+        setId(id);
+        setGenre(genre);
+        setArtist(artist);
+        setAlbum(album);
+        setReleaseyear(releaseyear);
+        setTitle(title);
+        setTitle(lyric);
     }
 
-
-//    public Song(DataSource dataSource, String title, String genre, String artist, String album, int releaseyear, String lyrics) {
-//        super(dataSource);
-////        this.title = title;
-////        this.genre = genre;
-////        this.artist = artist;
-////        this.album = album;
-////        this.releaseyear = releaseyear;
-////        this.lyrics = lyrics;
-//    }
-
-
-    public static double getColumnImpact(int index) {
-        return columnImpacts[index];
-    }
-
-    public static void setColumnImpacts(double[] columnImpacts) {
-        Song.columnImpacts = columnImpacts;
+    public static double getColumnImpact(String column) {
+        return columnImpacts.get(column);
     }
 
     public void setTitle(String title) {
         this.title = title;
+        map.put("title", title);
     }
 
     public void setGenre(String genre) {
         this.genre = genre;
+        map.put("genre", genre);
     }
 
     public void setArtist(String artist) {
         this.artist = artist;
+        map.put("artist", artist);
     }
 
     public void setAlbum(String album) {
         this.album = album;
+        map.put("album", album);
     }
 
     public void setReleaseyear(int releaseyear) {
         this.releaseyear = releaseyear;
+        map.put("year", releaseyear);
     }
 
     public void setLyric(String lyric) {
         this.lyric = lyric;
+        map.put("lyric", lyric);
     }
 
-    public static double[] getColumnImpacts() {
+    public static Map<String, Double> getColumnImpacts() {
         return columnImpacts;
     }
 
@@ -98,5 +106,14 @@ public class Song extends Entity {
 
     public void setId(Long id) {
         this.id = id;
+        map.put("id", id);
+    }
+
+    public Map<String, Object> getData() {
+        return map;
+    }
+
+    public Object get(String column) {
+        return map.get(column);
     }
 }

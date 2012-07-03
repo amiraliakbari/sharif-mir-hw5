@@ -1,6 +1,7 @@
 package edu.sharif.ce.mir.dal.data.impl;
 
 
+import edu.sharif.ce.mir.dal.entities.Artist;
 import edu.sharif.ce.mir.dal.entities.Song;
 
 import java.util.Map;
@@ -34,5 +35,8 @@ public interface Searcher {
      */
     public Map<Song, Double> search(String query);
 
-    public Iterable<String> era_search(String era);
+    public Iterable<String> artist_era_search(String era);
+    public Iterable<String> artist_name_search(String name);
+    public Map<Artist, Double> artist_similar_search(Artist artist);
+    public Map<Artist, Double> artist_similar_search(Artist artist, int limit);
 }

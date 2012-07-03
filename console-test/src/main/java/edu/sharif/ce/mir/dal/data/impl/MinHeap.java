@@ -1,7 +1,5 @@
 package edu.sharif.ce.mir.dal.data.impl;
 
-import edu.sharif.ce.mir.dal.entities.Song;
-
 /**
  * Adopted from: http://www.brilliantsheep.com/array-based-min-heap-java-implementation/
  * with changes to also save ids
@@ -9,12 +7,12 @@ import edu.sharif.ce.mir.dal.entities.Song;
 public class MinHeap {
 
     private double[] array;
-    private Song[] ids;
+    private Object[] ids;
     private int n = 0;
 
     public MinHeap(final int size) {
         array = new double[size];
-        ids = new Song[size];
+        ids = new Object[size];
     }
 
     public double min() {
@@ -25,7 +23,7 @@ public class MinHeap {
         return array[0];
     }
     
-    public Song minId() {
+    public Object minId() {
         if (isEmpty()) {
             return null;
         }
@@ -59,7 +57,7 @@ public class MinHeap {
     /**
      * Adds a new element to the heap and sifts up/down accordingly.
      */
-    public void add(final double value, Song song) {
+    public void add(final double value, Object song) {
         if (n == array.length) {
             throw new RuntimeException("Heap is full!");
         }
@@ -115,7 +113,7 @@ public class MinHeap {
         double temp = array[a];
         array[a] = array[b];
         array[b] = temp;
-        Song temp2 = ids[a];
+        Object temp2 = ids[a];
         ids[a] = ids[b];
         ids[b] = temp2;
     }
