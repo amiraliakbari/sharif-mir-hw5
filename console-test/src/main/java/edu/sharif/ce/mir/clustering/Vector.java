@@ -18,7 +18,7 @@ public class Vector {
 
     private Long id;
     private Map<Long, Double> list;
-    private Long centroidId;
+    private Integer clusterId;
     private static Stemmer stemmer = new EnglishStemmer();
     private static StopWords stopWords = new StopWords();
     private Dictionary dic;
@@ -60,10 +60,10 @@ public class Vector {
         }
     }
 
-    public Vector(Long id, Map<Long, Double> list, Long centroidId) {
+    public Vector(Long id, Map<Long, Double> list, Integer clusterId) {
         this.id = id;
         this.list = list;
-        this.centroidId = centroidId;
+        this.clusterId = clusterId;
     }
 
     public Long getId() {
@@ -74,12 +74,12 @@ public class Vector {
         return list;
     }
 
-    public Long getCentroidId() {
-        return centroidId;
+    public Integer getClusterId() {
+        return clusterId;
     }
 
-    public void setCentroidId(Long centroidId) {
-        this.centroidId = centroidId;
+    public void setClusterId(Integer clusterId) {
+        this.clusterId = clusterId;
     }
 
     public double getMagnitude() {
@@ -131,7 +131,7 @@ public class Vector {
                 }
             }
         }
-        return new Vector(0l, sumList, 0l);
+        return new Vector(0l, sumList, 0);
     }
     
     public static Vector calcAvg(List<Vector> vectors) {

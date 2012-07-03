@@ -1,5 +1,9 @@
 package edu.sharif.ce.mir.clustering;
 
+import edu.sharif.ce.mir.dal.data.Entity;
+import edu.sharif.ce.mir.dal.datasource.ClusterEntity;
+import edu.sharif.ce.mir.dal.impl.MySqlDataStorage;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,16 +18,47 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 public class KMeans {
-    private static final double MIN_IMPROVE_AMOUNT = 10;
+    private static final double MIN_IMPROVE_AMOUNT = 2;
 
-    public static void main(String[] args) {
-        VectorManager vectorManager = new VectorManagerImpl();
+    public static void main(String[] args) throws SQLException {
+        final MySqlDataStorage storage = new MySqlDataStorage("localhost", "musics", "musics", "1234");
+        storage.connect();
+        VectorManager vectorManager = new MyVectorManager(storage);
         List<Vector> vectors = null;
         try {
             vectors = vectorManager.getAllMusics();
         } catch (SQLException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
+
+
+//        for (Long termId : vectors.get(0).getList().keySet()) {
+//            System.out.print(termId + ":" + vectors.get(0).getList().get(termId) + ", ");
+//        }
+//        System.out.println();
+//        for (Long termId : vectors.get(10).getList().keySet()) {
+//            System.out.print(termId + ":" + vectors.get(10).getList().get(termId) + ", ");
+//        }
+//        System.out.println();
+
+//        HashMap<Long, Double> map = new HashMap<Long, Double>();
+//        map.put(1l, 10.0);
+//        map.put(3l, 5.0);
+//        Vector vec1 = new Vector(1l, map, 0l);
+//        map = new HashMap<Long, Double>();
+//        map.put(2l, 4.0);
+//        map.put(3l, 3.0);
+//        Vector vec2 = new Vector(1l, map, 0l);
+//
+//        System.out.println(vec1.getDistance(vec2));
+//        List<Vector> arrList = new ArrayList<Vector>();
+//        arrList.add(vec1);
+//        arrList.add(vec2);
+//        Vector vec = Vector.calcAvg(arrList);
+//        for (Long termId : vec.getList().keySet()) {
+//            System.out.print(termId + ":" + vec.getList().get(termId) + ", ");
+//        }
+//        System.out.println();
 
         List<Vector> centroids = getInitialCentroids(vectors);
         System.out.println("centroids:");
@@ -33,17 +68,31 @@ public class KMeans {
 
         double impAmount = 0;
         Map<Vector, List<Vector>> clustering;
+        Map<Vector, Integer> clusterIds = new HashMap<Vector, Integer>();
+        int iteration = 1;
         do {
-            clustering = reAssignVectors(vectors, centroids);
+            int clusterId = 1;
+            for (Vector centroid : centroids) {
+                clusterIds.put(centroid, clusterId);
+                clusterId += 1;
+            }
+
+            clustering = reAssignVectors(vectors, centroids, clusterIds);
             List<Vector> newCentroids = recomputeCentroids(clustering);
             impAmount = improvementAmount(centroids, newCentroids);
+            System.out.println("improvement amount for iteration " + iteration + " = " + impAmount);
             centroids = newCentroids;
-        } while (impAmount > MIN_IMPROVE_AMOUNT);
+            iteration++;
+        } while (impAmount > Math.sqrt(vectors.size()) * MIN_IMPROVE_AMOUNT);
 
-        //TODO: save centroids into DB.
+        for (Vector vector : vectors) {
+            Entity entity = new Entity(new ClusterEntity());
+            entity.set("id", vector.getId());
+            entity.set("group", vector.getClusterId());
+        }
 
         for (Vector centroid : clustering.keySet()) {
-            System.out.println("cluster of id " + centroid.getId() + " : ");
+            System.out.println("cluster of id " + clusterIds.get(centroid) + ":");
             for (Vector vector : clustering.get(centroid)) {
                 System.out.print(vector.getId() + ", ");
             }
@@ -66,8 +115,12 @@ public class KMeans {
         return centroids;
     }
 
-    private static Map<Vector, List<Vector>> reAssignVectors(List<Vector> vectors, List<Vector> centroids) {
+    private static Map<Vector, List<Vector>> reAssignVectors(List<Vector> vectors, List<Vector> centroids, Map<Vector, Integer> clusterIds) {
         Map<Vector, List<Vector>> clustering = new HashMap<Vector, List<Vector>>();
+        for (Vector centroid : centroids) {
+            clustering.put(centroid, new ArrayList<Vector>());
+        }
+
         for (Vector vector : vectors) {
             double minDist = 0;
 //            long nearest = centroids.get(0).getId();
@@ -79,14 +132,8 @@ public class KMeans {
 //                    nearest = centroid.getId();
                 }
             }
-//            vector.setCentroidId(nearest);
-            if (!clustering.containsKey(nearestCent)) {
-                List<Vector> cluster = new ArrayList<Vector>();
-                cluster.add(vector);
-                clustering.put(nearestCent, cluster);
-            } else {
-                clustering.get(nearestCent).add(vector);
-            }
+            vector.setClusterId(clusterIds.get(nearestCent));
+            clustering.get(nearestCent).add(vector);
         }
         return clustering;
     }
