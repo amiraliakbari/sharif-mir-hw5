@@ -1,7 +1,4 @@
-package edu.sharif.ce.mir.clustering.stemming;
-
-import edu.sharif.ce.mir.clustering.Vector;
-import edu.sharif.ce.mir.clustering.VectorManager;
+package edu.sharif.ce.mir.clustering;
 
 import java.util.List;
 

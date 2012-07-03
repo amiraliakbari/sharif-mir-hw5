@@ -1,6 +1,7 @@
-package edu.sharif.ce.mir.processor.stemming.impl;
+package edu.sharif.ce.mir.clustering.stemming.impl;
 
-import edu.sharif.ce.mir.processor.stemming.Stemmer;
+
+import edu.sharif.ce.mir.clustering.stemming.Stemmer;
 
 import java.util.HashMap;
 import java.util.Map;

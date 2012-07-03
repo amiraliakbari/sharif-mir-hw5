@@ -1,4 +1,4 @@
-package edu.sharif.ce.mir.processor.stemming;
+package edu.sharif.ce.mir.clustering.stemming;
 
 /**
  * @author Mohammad Milad Naseri (m.m.naseri@gmail.com)
