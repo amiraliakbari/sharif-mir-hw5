@@ -21,10 +21,19 @@ public class Vector {
         return null;
     }
 
+    private String removeStopWord(String lyric) {
+        return null;
+    }
+
+    private void initiateMap(String lyric) {
+
+    }
+
     public Vector(Song song) {
         this.id = song.getId();
         list = new HashMap<String, Integer>();
-
+        String newLyric = this.removeStopWord(song.getLyric());
+        newLyric = this.getStemmed(newLyric);
     }
 
     public Long getId() {
