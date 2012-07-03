@@ -7,10 +7,7 @@ import edu.sharif.ce.mir.dal.impl.MySqlDataStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class SongSearcher implements Searcher {
     private Iterable<Song> songs;
@@ -48,7 +45,7 @@ public class SongSearcher implements Searcher {
                 results.add(score, song);
             }
         }
-        Map<Song, Double> ranking = new HashMap<Song, Double>();
+        Map<Song, Double> ranking = new LinkedHashMap<Song, Double> ();
         while (!results.isEmpty()){
             ranking.put((Song) results.minId(), results.min());
             results.removeMin();
