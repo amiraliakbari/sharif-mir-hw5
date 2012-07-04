@@ -72,7 +72,7 @@ public class Crawler implements Runnable {
             } else {
                 System.err.println("Invalid year for song: " + year);
             }
-            if (songBean.getGenreS().length() > 0){
+            if (songBean.getGenreS().length() > 0) {
                 artistBean.addGenre(songBean.getGenreS());
             }
         } catch (SQLException e) {
@@ -104,9 +104,9 @@ public class Crawler implements Runnable {
         for (Track track : tracks) {
             if (newTracks.size() == length)
                 break;
-            String selectSong=selectSong(track.getName(),track.getArtist());
+            String selectSong = selectSong(track.getName(), track.getArtist());
             ResultSet rs = mySqlDataStorage.execute(selectSong);
-            String selectQueue=selectQueue(track.getName(),track.getArtist());
+            String selectQueue = selectQueue(track.getName(), track.getArtist());
             ResultSet
                     rs2 = mySqlDataStorage.execute(selectQueue);
             if (!rs.next() && !rs2.next()) {
@@ -115,7 +115,8 @@ public class Crawler implements Runnable {
         }
         return newTracks;
     }
-    private String selectQueue(String title,String artist){
+
+    private String selectQueue(String title, String artist) {
         StringBuilder sb = new StringBuilder();
         sb.append("select * from `queue` where title = '");
         sb.append(title.replace("\'", "\\\'"));
@@ -124,7 +125,8 @@ public class Crawler implements Runnable {
         sb.append("'");
         return sb.toString();
     }
-    private String selectSong(String title,String artist){
+
+    private String selectSong(String title, String artist) {
         StringBuilder sb = new StringBuilder();
         sb.append("select * from `songs` where title = '");
         sb.append(title.replace("\'", "\\\'"));
@@ -134,7 +136,7 @@ public class Crawler implements Runnable {
         return sb.toString();
     }
 
-    private String delete(String title,String artist){
+    private String delete(String title, String artist) {
         StringBuilder sb = new StringBuilder();
         sb.append("delete from `queue` where title = '");
         sb.append(title.replace("\'", "\\\'"));
@@ -172,7 +174,7 @@ public class Crawler implements Runnable {
                 "ENGINE=InnoDB\n" +
                 "ROW_FORMAT=DEFAULT\n" +
                 "AUTO_INCREMENT=140");
-        
+
         mySqlDataStorage.execute2("CREATE TABLE IF NOT EXISTS `artists` (\n" +
                 "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
                 "  `artist` varchar(255) COLLATE utf8_unicode_ci NOT NULL,\n" +
@@ -206,16 +208,19 @@ public class Crawler implements Runnable {
                 title = rs.getString("title");
                 artist = rs.getString("artist");
 
-                String delete=delete(title,artist);
+                String delete = delete(title, artist);
                 mySqlDataStorage.execute2(delete);
                 safe = true;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            System.out.println("crawling start: name=" + title + " artist=" + artist);
-            crawlOneMusic(artist, title);
-            System.out.println("-------------------------------------------------");
+            if (safe) {
+                System.out.println("crawling start: name=" + title + " artist=" + artist);
+                crawlOneMusic(artist, title);
+                System.out.println("-------------------------------------------------");
+            }
         }
+
     }
 
     public static void main(String[] args) {

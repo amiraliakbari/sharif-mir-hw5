@@ -38,13 +38,13 @@ public class SongBusiness {
                 }
             }
             int year = 0;
-            if (album.getReleaseDate() != null) {
+            if (album!=null && album.getReleaseDate() != null) {
                 SimpleDateFormat simpleDateformat = new SimpleDateFormat("yyyy");
                 year = Integer.valueOf(simpleDateformat.format(album.getReleaseDate()));
             }
             return new SongBean(title, genre, artist, albumTitle, year, "");
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             return null;
         }
     }
