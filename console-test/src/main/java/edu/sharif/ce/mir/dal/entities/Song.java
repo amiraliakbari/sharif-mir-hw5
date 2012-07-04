@@ -64,7 +64,7 @@ public class Song{
 
     public void setReleaseyear(int releaseyear) {
         this.releaseyear = releaseyear;
-        map.put("year", releaseyear);
+        map.put("releaseyear", releaseyear);
     }
 
     public void setLyric(String lyric) {
@@ -115,5 +115,9 @@ public class Song{
 
     public Object get(String column) {
         return map.get(column);
+    }
+    
+    public String toString(){
+        return title + "(" + artist + ")";
     }
 }

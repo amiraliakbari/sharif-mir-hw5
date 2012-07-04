@@ -167,7 +167,7 @@ public class SongSearcher implements Searcher {
                 for (String key: keys){
                     double impact = Song.getColumnImpact(key);
                     for (String term: terms){
-                        if (data.get(key).toString().contains(term)){
+                        if (data.get(key).toString().toLowerCase().contains(term)){
                             score += impact;
                             break;
                         }

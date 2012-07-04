@@ -73,7 +73,7 @@ public class QueryConsole implements AutoLoadedExtension {
     )
     public void query(Console console, Map<String, Object> arguments) {
         String query = (String) arguments.get("query");
-        console.write(new PrimitiveOutput("Querying:" + query));
+        console.write(new PrimitiveOutput("Search Results for:" + query));
         Map<Song, Double> results = searcher.search(query);
         printSongs(console, results);
     }
@@ -84,7 +84,7 @@ public class QueryConsole implements AutoLoadedExtension {
     public void query_limit(Console console, Map<String, Object> arguments) {
         String query = (String) arguments.get("query");
         Integer limit = (Integer) arguments.get("limit");
-        console.write(new PrimitiveOutput("Querying:" + query));
+        console.write(new PrimitiveOutput("Search Results for:" + query));
         Map<Song, Double> results = searcher.search(query, null, limit);
         printSongs(console, results);
     }
@@ -97,7 +97,7 @@ public class QueryConsole implements AutoLoadedExtension {
         String column = (String) arguments.get("column");
 //        System.out.print("vahid: "+query+" "+column);
 
-        console.write(new PrimitiveOutput("Querying:" + query));
+        console.write(new PrimitiveOutput("Search Results for:" + query));
         Map<Song, Double> results = searcher.search(query, column);
         printSongs(console, results);
     }
@@ -109,7 +109,7 @@ public class QueryConsole implements AutoLoadedExtension {
         String query = (String) arguments.get("query");
         String column = (String) arguments.get("column");
         Integer limit = (Integer) arguments.get("limit");
-        console.write(new PrimitiveOutput("Querying:" + query + "," + (column != null ? column : "all") + "," + limit));
+        console.write(new PrimitiveOutput("Search Results for:" + query + "," + (column != null ? column : "all") + "," + limit));
         Map<Song, Double> results = searcher.search(query, column, limit);
         printSongs(console, results);
     }
@@ -226,9 +226,11 @@ public class QueryConsole implements AutoLoadedExtension {
         return;
     }
     private void printSongs(Console console, Map<Song, Double> results) {
+        int index = 1;
         for (Song song : results.keySet()) {
             Integer rel = (int) (results.get(song) * 100);
-            console.write(new PrimitiveOutput("(Song by:" + song.title + " = " + rel.toString() + "%)"));
+            console.write(new PrimitiveOutput(index++ + ") " + song + " [" + rel.toString() + "%]"));
+
         }
     }
 
