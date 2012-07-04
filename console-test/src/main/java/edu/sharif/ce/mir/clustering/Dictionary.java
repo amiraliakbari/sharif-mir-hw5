@@ -23,9 +23,9 @@ public class Dictionary {
 
     public Dictionary(MySqlDataStorage storage) throws SQLException {
         this.storage = storage;
-        try{
-        storage.execute2(new DictionaryDatasource().createSql());
-        }catch(SQLException e){
+        try {
+            storage.execute2(new DictionaryDatasource().createSql());
+        } catch (SQLException e) {
         }
         List<Entity> entities = storage.selectAll(new DictionaryDatasource());
         allWord = new ArrayList<DictionaryEntity>();
@@ -38,18 +38,41 @@ public class Dictionary {
     }
 
     public Long getDBId(String word) throws SQLException {
+        word = word.toLowerCase();
         for (int i = 0; i < allWord.size(); i++) {
-            if (allWord.get(i).getWord().equals(word)) {
+            if (allWord.get(i).getWord().toLowerCase().equals(word)) {
                 return allWord.get(i).getId();
             }
         }
+        /////////////////
+        String sql=null;
+        ResultSet rs=null;
+        try {
+            sql = DictionaryDatasource.selectWord(word);
+            rs = storage.execute(sql);
+            if (rs.next()) {
+                DictionaryEntity en = new DictionaryEntity();
+                en.setId(rs.getLong("id"));
+                en.setWord(rs.getString("word"));
+                allWord.add(en);
+                return rs.getLong("id");
+            }
+        } catch (SQLException e) {
+            System.out.println(sql);
+            e.printStackTrace();
+        }
+        /////////////
         Entity entity = new Entity(new DictionaryDatasource());
         entity.set("word", word);
+        System.out.println(word);
         storage.insert(entity);
-        allWord.add(entity.toObject(DictionaryEntity.class));
-        String sql=DictionaryDatasource.selectWord(word);
-        ResultSet rs =storage.execute(sql);
+//        String sql=DictionaryDatasource.selectWord(word);
+        rs = storage.execute(sql);
         rs.next();
+        DictionaryEntity en = new DictionaryEntity();
+        en.setId(rs.getLong("id"));
+        en.setWord(rs.getString("word"));
+        allWord.add(en);
         return rs.getLong("id");
 
     }

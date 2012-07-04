@@ -43,12 +43,12 @@ public class Vector {
         this.id = song.getId();
         this.dic=dic;
         list = new HashMap<Long, Double>();
-        StringTokenizer st = new StringTokenizer(song.getLyric());
+        StringTokenizer st = new StringTokenizer(song.getLyric()," \n/u\0160?,(){}.-_+=!@#'’:[]\\/*;");
         while (st.hasMoreTokens()) {
-            String t = st.nextToken();
+            String t = st.nextToken().trim();
             if (!stopWords.isStopWord(t)) {
                 t = stemmer.stem(t);
-//                System.out.println(t);
+//                System.out.println("vector: "+t);
 
                 Long id = dic.getDBId(t);
                 if (list.containsKey(id)) {

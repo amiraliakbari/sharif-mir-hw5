@@ -48,6 +48,6 @@ public class DictionaryDatasource implements DataSource {
     }
     
     public static String selectWord(String word){
-        return "SELECT ID FROM dictionary WHERE `word`='"+word+"';";
+        return "SELECT * FROM dictionary WHERE `word`='"+word+"';";
     }
 }
