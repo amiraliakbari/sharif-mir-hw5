@@ -17,8 +17,21 @@ public class Vector {
     private HashMap<String, Integer> list;
 
 
+    private String getStemmed(String str) {
+        return null;
+    }
+
     public Vector(Song song) {
         this.id = song.getId();
-        list=new HashMap<String, Integer>();
+        list = new HashMap<String, Integer>();
+
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public HashMap<String, Integer> getList() {
+        return list;
     }
 }
