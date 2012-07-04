@@ -12,25 +12,19 @@ import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
- * User: Administrator
+ * User: Hossein
  * Date: 7/3/12
  * Time: 8:19 AM
- * To change this template use File | Settings | File Templates.
  */
 public class KMeans {
-    private static final double MIN_IMPROVE_AMOUNT = 2;
+    private static final double SINGLE_STOP_DEC_AMOUNT = 1;
 
     public static void main(String[] args) throws SQLException {
         final MySqlDataStorage storage = new MySqlDataStorage("localhost", "musics", "musics", "1234");
         storage.connect();
         VectorManager vectorManager = new MyVectorManager(storage);
         List<Vector> vectors = null;
-        try {
-            vectors = vectorManager.getAllMusics();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
+        vectors = vectorManager.getAllMusics();
 
 //        for (Long termId : vectors.get(0).getList().keySet()) {
 //            System.out.print(termId + ":" + vectors.get(0).getList().get(termId) + ", ");
@@ -60,43 +54,72 @@ public class KMeans {
 //        }
 //        System.out.println();
 
-        List<Vector> centroids = getInitialCentroids(vectors);
-        System.out.println("centroids:");
-        for (Vector vector : centroids) {
-            System.out.println(vector.getId());
-        }
-
-        double impAmount = 0;
-        Map<Vector, List<Vector>> clustering;
+        // Do K-means algorithm.
+        Map<Vector, List<Vector>> clustering = new HashMap<Vector, List<Vector>>();
         Map<Vector, Integer> clusterIds = new HashMap<Vector, Integer>();
-        int iteration = 1;
+        List<Vector> centroids = null;
+        double lastRss = 0, rss = 0;
+        double decAmount = 0;
+        double stoppingDecAmount = SINGLE_STOP_DEC_AMOUNT * vectors.size();
+        System.out.print("stopping decrease amount = " + stoppingDecAmount);
+        int iteration = 0;
         do {
+            iteration++;
+            if (iteration != 1) {
+                // Recomputation step
+                centroids = recomputeCentroids(clustering);
+            } else {
+                // Initialize seeds.
+                centroids = getInitialCentroids(vectors);
+                System.out.println("centroids:");
+                for (Vector vector : centroids) {
+                    System.out.println(vector.getId());
+                }
+            }
+
+            // Map id's to cluster centroids.
             int clusterId = 1;
             for (Vector centroid : centroids) {
                 clusterIds.put(centroid, clusterId);
                 clusterId += 1;
             }
 
+            // Reassignment step
             clustering = reAssignVectors(vectors, centroids, clusterIds);
-            List<Vector> newCentroids = recomputeCentroids(clustering);
-            impAmount = improvementAmount(centroids, newCentroids);
-            System.out.println("improvement amount for iteration " + iteration + " = " + impAmount);
-            centroids = newCentroids;
-            iteration++;
-        } while (impAmount > Math.sqrt(vectors.size()) * MIN_IMPROVE_AMOUNT);
+//            decAmount = improvementAmount(centroids, newCentroids);
 
-        for (Vector vector : vectors) {
-            Entity entity = new Entity(new ClusterEntity());
-            entity.set("id", vector.getId());
-            entity.set("group", vector.getClusterId());
-        }
+            // Calculate RSS.
+            lastRss = rss;
+            rss = calcRSS(clustering);
+            if (iteration != 1) {
+                decAmount = lastRss - rss;
+                System.out.println("iteration " + iteration + " : " + lastRss + " - " + rss + " = " + decAmount);
+            }
+//            centroids = newCentroids;
+        } while (iteration == 1 || decAmount > stoppingDecAmount);
 
+        // Print clusters in the console.
         for (Vector centroid : clustering.keySet()) {
             System.out.println("cluster of id " + clusterIds.get(centroid) + ":");
             for (Vector vector : clustering.get(centroid)) {
                 System.out.print(vector.getId() + ", ");
             }
             System.out.println();
+        }
+
+        // Save clusters in the DB.
+        for (Vector vector : vectors) {
+            Entity entity = new Entity(new ClusterEntity());
+            entity.set("id", vector.getId());
+            entity.set("group", vector.getClusterId());
+            try {
+                Entity foundEntity = storage.select(entity);
+                // id found:
+                storage.update(entity);
+            } catch (SQLException e) {
+                // id not found:
+                storage.insert(entity);
+            }
         }
     }
 
@@ -122,16 +145,18 @@ public class KMeans {
         }
 
         for (Vector vector : vectors) {
-            double minDist = 0;
-//            long nearest = centroids.get(0).getId();
             Vector nearestCent = centroids.get(0);
+            double minDist = vector.getDistance(nearestCent);
+            System.out.print("song id " + vector.getId() + " : ");
             for (Vector centroid : centroids) {
                 double dist = vector.getDistance(centroid);
+                System.out.print(clusterIds.get(centroid) + ":" + dist + ", ");
                 if (dist < minDist) {
                     minDist = dist;
-//                    nearest = centroid.getId();
+                    nearestCent = centroid;
                 }
             }
+            System.out.println(" -> min = " + clusterIds.get(nearestCent));
             vector.setClusterId(clusterIds.get(nearestCent));
             clustering.get(nearestCent).add(vector);
         }
@@ -157,5 +182,15 @@ public class KMeans {
             }
             return sum;
         }
+    }
+
+    private static double calcRSS(Map<Vector, List<Vector>> clustering) {
+        double rss = 0;
+        for (Vector centroid : clustering.keySet()) {
+            for (Vector vector : clustering.get(centroid)) {
+                rss += Math.pow(vector.getDistance(centroid), 2);
+            }
+        }
+        return rss;
     }
 }

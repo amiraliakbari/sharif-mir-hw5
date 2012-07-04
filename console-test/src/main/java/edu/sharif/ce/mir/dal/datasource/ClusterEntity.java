@@ -14,7 +14,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class ClusterEntity implements DataSource {
-    public static final String TABLE_NAME = "dictionary";
+    public static final String TABLE_NAME = "cluster";
     private final ColumnMetaData id = new ColumnMetaData("id", Long.class, false);
     private final ColumnMetaData group = new ColumnMetaData("group", Integer.class, false);
 

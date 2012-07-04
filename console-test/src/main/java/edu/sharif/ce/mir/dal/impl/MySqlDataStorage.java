@@ -107,7 +107,7 @@ public class MySqlDataStorage implements DataStorage {
         String sql = generator.getSelectStatement(entity.getDataSource());
 //        System.out.println("select: "+sql);
         sql = injector.inject(sql, entity.getData());
-        System.out.println(sql);
+//        System.out.println(sql);
         ResultSet rs = null;
         Statement stmt = conn.createStatement();
         rs = stmt.executeQuery(sql);
