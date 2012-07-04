@@ -105,7 +105,7 @@ public class MySqlDataStorage implements DataStorage {
     @Override
     public Entity select(Entity entity) throws SQLException {
         String sql = generator.getSelectStatement(entity.getDataSource());
-//        System.out.println(sql);
+//        System.out.println("select: "+sql);
         sql = injector.inject(sql, entity.getData());
         System.out.println(sql);
         ResultSet rs = null;
@@ -142,17 +142,15 @@ public class MySqlDataStorage implements DataStorage {
 
     public List<Entity> selectAll(DataSource dataSource) throws SQLException {
         String sql = generator.getSelectAllStatement(dataSource);
-//        System.out.println(sql);
-        System.out.println(sql);
         ResultSet rs = null;
         Statement stmt = conn.createStatement();
         rs = stmt.executeQuery(sql);
         ArrayList<Entity> entities = new ArrayList<Entity>();
         Entity newEntity = new Entity(dataSource);
-        System.out.println(rs);
         if (rs == null)
             return null;
         while (rs.next()) {
+            newEntity = new Entity(dataSource);
             for (ColumnMetaData column : dataSource.getColumns()) {
                 if (column.getType().equals(String.class)) {
                     newEntity.set(column.getName(), rs.getString(column.getName()));

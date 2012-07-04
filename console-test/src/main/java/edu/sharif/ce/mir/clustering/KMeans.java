@@ -1,5 +1,6 @@
 package edu.sharif.ce.mir.clustering;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +18,12 @@ public class KMeans {
 
     public static void main(String[] args) {
         VectorManager vectorManager = new VectorManagerImpl();
-        List<Vector> vectors = vectorManager.getAllMusics();
+        List<Vector> vectors = null;
+        try {
+            vectors = vectorManager.getAllMusics();
+        } catch (SQLException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
 
         List<Vector> centroids = getInitialCentroids(vectors);
         System.out.println("centroids:");

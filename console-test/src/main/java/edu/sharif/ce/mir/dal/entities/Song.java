@@ -1,8 +1,5 @@
 package edu.sharif.ce.mir.dal.entities;
 
-import edu.sharif.ce.mir.dal.DataSource;
-import edu.sharif.ce.mir.dal.data.Entity;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +24,9 @@ public class Song{
     int releaseyear;
     public String title;
     public String lyric;
+    public Song(){
+
+    }
 
     public Song(Long id, String genre, String artist, String album, int releaseyear, String title, String lyric) {
         setId(id);

@@ -1,5 +1,6 @@
 package edu.sharif.ce.mir.clustering;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -10,5 +11,5 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public interface VectorManager {
-    public List<Vector> getAllMusics();
+    public List<Vector> getAllMusics() throws SQLException;
 }

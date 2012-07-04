@@ -23,12 +23,13 @@ public class StopWords {
         while (sc.hasNext()) {
             String str = sc.nextLine();
             sb.append(str);
+            sb.append(" ");
         }
         StopWords = sb.toString();
     }
 
     public boolean isStopWord(String str) {
-        if (!StopWords.contains(str))
+        if (StopWords.indexOf(str.toLowerCase())>0)
             return true;
         return false;
     }

@@ -4,6 +4,7 @@ import edu.sharif.ce.mir.clustering.stemming.Stemmer;
 import edu.sharif.ce.mir.clustering.stemming.impl.EnglishStemmer;
 import edu.sharif.ce.mir.dal.entities.Song;
 
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -20,6 +21,12 @@ public class Vector {
     private Long centroidId;
     private static Stemmer stemmer = new EnglishStemmer();
     private static StopWords stopWords = new StopWords();
+    private Dictionary dic;
+
+
+    public Long getDBId(String name) throws SQLException {
+        return dic.getDBId(name);
+    }
 
 
     private String getStemmed(String str) {
@@ -30,20 +37,20 @@ public class Vector {
         return null;
     }
 
-    private Long getDBId(String name) {
-        return new Long(1);
-    }
 
-    public Vector(Song song) {
+
+    public Vector(Dictionary dic,Song song) throws SQLException {
         this.id = song.getId();
+        this.dic=dic;
         list = new HashMap<Long, Double>();
         StringTokenizer st = new StringTokenizer(song.getLyric());
-//        ArrayList<String> words=new ArrayList<String>();
         while (st.hasMoreTokens()) {
             String t = st.nextToken();
             if (!stopWords.isStopWord(t)) {
                 t = stemmer.stem(t);
-                Long id = getDBId(t);
+//                System.out.println(t);
+
+                Long id = dic.getDBId(t);
                 if (list.containsKey(id)) {
                     list.put(id, list.get(id) + 1);
                 } else {
