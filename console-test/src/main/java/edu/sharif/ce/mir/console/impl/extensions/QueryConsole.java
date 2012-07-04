@@ -160,15 +160,12 @@ public class QueryConsole implements AutoLoadedExtension {
         Song s1 = null;
         Song s2 = null;
         Song s3 = null;
-        System.out.println("i found "+results.size()+" results");
-        printSongs(console,results);
         boolean isFirstIteration = true;
         ArrayList<Song> resultsArrayList =  new ArrayList<Song>();
         Iterator it=results.keySet().iterator();
         for (Song song: results.keySet()) {
             resultsArrayList.add(song);
         }
-        System.out.println("now "+ resultsArrayList.size() +" results are in ResultsArrayList");
         if (resultsArrayList.size() < 3){
             overallResults = resultsArrayList;
         }else{
