@@ -154,18 +154,21 @@ public class QueryConsole implements AutoLoadedExtension {
     )
     public void likeSearch(Console console, Map<String, Object> arguments) {
         String query = (String) arguments.get("query");
-        Map<Song, Double> results = searcher.search(query, "title", 10);
+        Map<Song, Double> results = searcher.search(query,null, 7);
 //        print(console,results);
         ArrayList<Song> overallResults = new ArrayList<Song>();
         Song s1 = null;
         Song s2 = null;
         Song s3 = null;
-
+        System.out.println("i found "+results.size()+" results");
+        printSongs(console,results);
         boolean isFirstIteration = true;
         ArrayList<Song> resultsArrayList =  new ArrayList<Song>();
-        for (Iterator it=results.keySet().iterator(); it.hasNext(); ) {
-            resultsArrayList.add((Song)it.next());
+        Iterator it=results.keySet().iterator();
+        for (Song song: results.keySet()) {
+            resultsArrayList.add(song);
         }
+        System.out.println("now "+ resultsArrayList.size() +" results are in ResultsArrayList");
         if (resultsArrayList.size() < 3){
             overallResults = resultsArrayList;
         }else{
@@ -176,7 +179,6 @@ public class QueryConsole implements AutoLoadedExtension {
                     s3 = resultsArrayList.get(i-2);
                     i -= 2;
                     isFirstIteration = false;
-                    continue;
                 }else{
                     s1 = s2;
                     s2 = s3;
@@ -189,7 +191,7 @@ public class QueryConsole implements AutoLoadedExtension {
 
                 Integer relDeltaS1S2 = relS1 - relS2;
                 Integer relDeltaS2S3 = relS2 - relS3;
-                if (relDeltaS1S2 >= relDeltaS2S3 * 2){
+                if (relDeltaS1S2 > (relDeltaS2S3 + 1) * 3){
                     overallResults.add(s1);
                     break;
                 }else{

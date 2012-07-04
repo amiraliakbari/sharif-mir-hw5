@@ -225,7 +225,7 @@ public class Crawler implements Runnable {
 //        sb.append("aname".replace("\'", "\\\'"));
 //        sb.append("' and years NOT LIKE '%,"+year+",%'");
 //        System.err.println(sb.toString());
-        final MySqlDataStorage storage = new MySqlDataStorage("localhost", "musics", "musics", "1234");
+        final MySqlDataStorage storage = new MySqlDataStorage("81.31.190.236", "musics", "musics", "1234");
         storage.connect();
         Thread crawler = new Thread(new Crawler(storage));
         crawler.start();

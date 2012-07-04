@@ -35,7 +35,7 @@ public class Song{
         setAlbum(album);
         setReleaseyear(releaseyear);
         setTitle(title);
-        setTitle(lyric);
+        setLyric(lyric);
     }
 
     public static double getColumnImpact(String column) {
