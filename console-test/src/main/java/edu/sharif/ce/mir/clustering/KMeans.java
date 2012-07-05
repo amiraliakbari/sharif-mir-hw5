@@ -5,10 +5,7 @@ import edu.sharif.ce.mir.dal.datasource.ClusterEntity;
 import edu.sharif.ce.mir.dal.impl.MySqlDataStorage;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,81 +23,69 @@ public class KMeans {
         List<Vector> vectors = null;
         vectors = vectorManager.getAllMusics();
 
-//        for (Long termId : vectors.get(0).getList().keySet()) {
-//            System.out.print(termId + ":" + vectors.get(0).getList().get(termId) + ", ");
-//        }
-//        System.out.println();
-//        for (Long termId : vectors.get(10).getList().keySet()) {
-//            System.out.print(termId + ":" + vectors.get(10).getList().get(termId) + ", ");
-//        }
-//        System.out.println();
+        long n = vectors.size();
+        System.out.println("N = " + n);
+        int radicalN = (int) Math.sqrt(vectors.size() * 1.0);
+        System.out.println("radical N = " + radicalN);
+        long stopMaxClusterSize = (long) (n + Math.sqrt(n * 1.0)) / 2;
+        System.out.println("stopping cluster size = " + stopMaxClusterSize);
+        double stoppingDecAmount = SINGLE_STOP_DEC_AMOUNT * vectors.size();
+        System.out.println("stopping decrease amount = " + stoppingDecAmount);
 
-//        HashMap<Long, Double> map = new HashMap<Long, Double>();
-//        map.put(1l, 10.0);
-//        map.put(3l, 5.0);
-//        Vector vec1 = new Vector(1l, map, 0l);
-//        map = new HashMap<Long, Double>();
-//        map.put(2l, 4.0);
-//        map.put(3l, 3.0);
-//        Vector vec2 = new Vector(1l, map, 0l);
-//
-//        System.out.println(vec1.getDistance(vec2));
-//        List<Vector> arrList = new ArrayList<Vector>();
-//        arrList.add(vec1);
-//        arrList.add(vec2);
-//        Vector vec = Vector.calcAvg(arrList);
-//        for (Long termId : vec.getList().keySet()) {
-//            System.out.print(termId + ":" + vec.getList().get(termId) + ", ");
-//        }
-//        System.out.println();
-
-        // Do K-means algorithm.
         Map<Vector, List<Vector>> clustering = new HashMap<Vector, List<Vector>>();
         Map<Vector, Integer> clusterIds = new HashMap<Vector, Integer>();
         List<Vector> centroids = null;
-        double lastRss = 0, rss = 0;
-        double decAmount = 0;
-        double stoppingDecAmount = SINGLE_STOP_DEC_AMOUNT * vectors.size();
-        System.out.print("stopping decrease amount = " + stoppingDecAmount);
-        int iteration = 0;
+
+        // Repeat until having balanced Clustering.
+        int algRepeat = 0;
         do {
-            iteration++;
-            if (iteration != 1) {
-                // Recomputation step
-                centroids = recomputeCentroids(clustering);
-            } else {
+            algRepeat++;
+            if (algRepeat == 1) {
                 // Initialize seeds.
-                centroids = getInitialCentroids(vectors);
-                System.out.println("centroids:");
+                centroids = peekCentroids(vectors, radicalN);
+                System.out.println("initial centroids:");
                 for (Vector vector : centroids) {
                     System.out.println(vector.getId());
                 }
+            } else {
+                centroids = getBalancedCentroids(clustering, radicalN);
             }
 
-            // Map id's to cluster centroids.
-            int clusterId = 1;
-            for (Vector centroid : centroids) {
-                clusterIds.put(centroid, clusterId);
-                clusterId += 1;
-            }
+            // Do K-means algorithm.
+            double lastRss = 0, rss = 0;
+            double decAmount = 0;
+            int iteration = 0;
+            do {
+                iteration++;
+                if (iteration != 1) {
+                    // Recomputation step
+                    centroids = recomputeCentroids(clustering);
+                }
 
-            // Reassignment step
-            clustering = reAssignVectors(vectors, centroids, clusterIds);
-//            decAmount = improvementAmount(centroids, newCentroids);
+                // Map id's to cluster centroids.
+                int clusterId = 1;
+                for (Vector centroid : centroids) {
+                    clusterIds.put(centroid, clusterId);
+                    clusterId += 1;
+                }
 
-            // Calculate RSS.
-            lastRss = rss;
-            rss = calcRSS(clustering);
-            if (iteration != 1) {
-                decAmount = lastRss - rss;
-                System.out.println("iteration " + iteration + " : " + lastRss + " - " + rss + " = " + decAmount);
-            }
-//            centroids = newCentroids;
-        } while (iteration == 1 || decAmount > stoppingDecAmount);
+                // Reassignment step
+                clustering = reAssignVectors(vectors, centroids, clusterIds);
+
+                // Calculate RSS.
+                lastRss = rss;
+                rss = calcRSS(clustering);
+                if (iteration != 1) {
+                    decAmount = lastRss - rss;
+                    System.out.println("iteration " + iteration + " : " + lastRss + " - " + rss + " = " + decAmount);
+                }
+            } while (iteration == 1 || decAmount > stoppingDecAmount);
+
+        } while (getMaxClusterSize(clustering) > stopMaxClusterSize);
 
         // Print clusters in the console.
         for (Vector centroid : clustering.keySet()) {
-            System.out.println("cluster of id " + clusterIds.get(centroid) + ":");
+            System.out.print("cluster of id " + clusterIds.get(centroid) + " (" + clustering.get(centroid).size() + " song(s)):");
             for (Vector vector : clustering.get(centroid)) {
                 System.out.print(vector.getId() + ", ");
             }
@@ -108,24 +93,11 @@ public class KMeans {
         }
 
         // Save clusters in the DB.
-        for (Vector vector : vectors) {
-            Entity entity = new Entity(new ClusterEntity());
-            entity.set("id", vector.getId());
-            entity.set("group", vector.getClusterId());
-            try {
-                Entity foundEntity = storage.select(entity);
-                // id found:
-                storage.update(entity);
-            } catch (SQLException e) {
-                // id not found:
-                storage.insert(entity);
-            }
-        }
+        saveClusters(vectors, storage);
     }
 
-    private static List<Vector> getInitialCentroids(List<Vector> vectors) {
-        long clusterSize = (long) Math.sqrt(vectors.size() * 1.0);
-        System.out.println("cluster size = " + clusterSize);
+    private static List<Vector> peekCentroids(List<Vector> vectors, int centroidCount) {
+        long clusterSize = vectors.size() / centroidCount;
         long counter = 0;
         List<Vector> centroids = new ArrayList<Vector>();
         for (Vector vector : vectors) {
@@ -147,16 +119,16 @@ public class KMeans {
         for (Vector vector : vectors) {
             Vector nearestCent = centroids.get(0);
             double minDist = vector.getDistance(nearestCent);
-            System.out.print("song id " + vector.getId() + " : ");
+//            System.out.print("song id " + vector.getId() + " : ");
             for (Vector centroid : centroids) {
                 double dist = vector.getDistance(centroid);
-                System.out.print(clusterIds.get(centroid) + ":" + dist + ", ");
+//                System.out.print(clusterIds.get(centroid) + ":" + dist + ", ");
                 if (dist < minDist) {
                     minDist = dist;
                     nearestCent = centroid;
                 }
             }
-            System.out.println(" -> min = " + clusterIds.get(nearestCent));
+//            System.out.println(" -> min = " + clusterIds.get(nearestCent));
             vector.setClusterId(clusterIds.get(nearestCent));
             clustering.get(nearestCent).add(vector);
         }
@@ -172,17 +144,17 @@ public class KMeans {
         return newCentroids;
     }
 
-    private static double improvementAmount(List<Vector> oldCentroids, List<Vector> newCentroids) {
-        if (oldCentroids.size() != newCentroids.size()) {
-            throw new IllegalArgumentException("Sizes of oldCentroids and newCentroids are not equal.");
-        } else {
-            double sum = 0;
-            for (int i = 0; i < oldCentroids.size(); i++) {
-                sum += oldCentroids.get(i).getDistance(newCentroids.get(i));
-            }
-            return sum;
-        }
-    }
+//    private static double improvementAmount(List<Vector> oldCentroids, List<Vector> newCentroids) {
+//        if (oldCentroids.size() != newCentroids.size()) {
+//            throw new IllegalArgumentException("Sizes of oldCentroids and newCentroids are not equal.");
+//        } else {
+//            double sum = 0;
+//            for (int i = 0; i < oldCentroids.size(); i++) {
+//                sum += oldCentroids.get(i).getDistance(newCentroids.get(i));
+//            }
+//            return sum;
+//        }
+//    }
 
     private static double calcRSS(Map<Vector, List<Vector>> clustering) {
         double rss = 0;
@@ -192,5 +164,88 @@ public class KMeans {
             }
         }
         return rss;
+    }
+
+    private static int getMaxClusterSize(Map<Vector, List<Vector>> clustering) {
+        int maxSize = 0;
+        for (List<Vector> vecList : clustering.values()) {
+            if (vecList.size() > maxSize) {
+                maxSize = vecList.size();
+            }
+        }
+        return maxSize;
+    }
+
+    private static List<Vector> getBalancedCentroids(Map<Vector, List<Vector>> clustering, int radicalN) {
+        int maxSize = 0;
+        List<Vector> largest = null;
+        for (List<Vector> vecList : clustering.values()) {
+            if (vecList.size() > maxSize) {
+                maxSize = vecList.size();
+                largest = vecList;
+            }
+        }
+        List<Vector> centroids = sortCentroids(clustering);
+        System.out.print("sorted cluster sizes : ");
+        for (Vector centroid : centroids) {
+            System.out.print(clustering.get(centroid).size() + ", ");
+        }
+        // Remove centroid with smallest cluster size.
+        int newCentroidsCount = maxSize / radicalN;
+        System.out.print(" -> " + (newCentroidsCount - 1) + " centroids removed then : ");
+        for (int i = 0; i < newCentroidsCount - 1; i++) {
+            centroids.remove(0);
+        }
+        for (Vector centroid : centroids) {
+            System.out.print(clustering.get(centroid).size() + ", ");
+        }
+
+        // Add some centroids instead of the centroid with largest cluster size.
+        centroids.remove(largest);
+        List<Vector> newCentroids = peekCentroids(largest, maxSize / radicalN);
+        System.out.print("centroids added instead of the largest : ");
+        for (Vector vector : newCentroids) {
+            System.out.print(vector.getId() + ", ");
+        }
+        System.out.println();
+        centroids.addAll(peekCentroids(largest, maxSize / radicalN));
+
+        return centroids;
+    }
+
+    private static List<Vector> sortCentroids(final Map<Vector, List<Vector>> clustering) {
+        List<Vector> centroids = new ArrayList<Vector>();
+        centroids.addAll(clustering.keySet());
+        Collections.sort(centroids, new Comparator<Vector>() {
+            @Override
+            public int compare(Vector o1, Vector o2) {
+                int size1 = clustering.get(o1).size();
+                int size2 = clustering.get(o2).size();
+                if (size1 > size2) {
+                    return 1;
+                } else if (size1 < size2) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+        return centroids;
+    }
+
+    private static void saveClusters(List<Vector> vectors, final MySqlDataStorage storage) throws SQLException {
+        for (Vector vector : vectors) {
+            Entity entity = new Entity(new ClusterEntity());
+            entity.set("id", vector.getId());
+            entity.set("group", vector.getClusterId());
+            try {
+                Entity foundEntity = storage.select(entity);
+                // id found:
+                storage.update(entity);
+            } catch (SQLException e) {
+                // id not found:
+                storage.insert(entity);
+            }
+        }
     }
 }
